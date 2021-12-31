@@ -30,8 +30,6 @@ const config = {
  * 地铁预约代码
  */
 
-let isReservation = true;
-
 // 检查今天是否需要抢票
 const checkTomorrowIsHoliday = async () => {
     const { apiUrl } = config;
@@ -39,9 +37,9 @@ const checkTomorrowIsHoliday = async () => {
     let tomorrow = '' + now.getFullYear() + (now.getMonth() + 1) + (now.getDate() + 1)
     let { data } = await axios({ url: apiUrl.checkHoliday + tomorrow, method: 'get' });
     if (data === 1) {
-        isReservation = false;
+        global.isReservation = false;
     }else{
-        isReservation = true;
+        global.isReservation = true;
     }
 }
 
@@ -124,7 +122,7 @@ exports.metro = async (event, context) => {
     console.log('触发定时任务');
     switch (event.Message) {
         case 'createAppointment':
-            if (isReservation) {
+            if (global.isReservation) {
                 console.log('开始预约');
                 await createAppointment();
                 console.log('结束预约');
